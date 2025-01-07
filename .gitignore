@@ -1,5 +1,5 @@
 .s
-db.sqlite
+db.sqlite3
 manage.py
 __pycache__/
 *.py[cod]
