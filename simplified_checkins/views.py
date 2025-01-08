@@ -7,6 +7,6 @@ class IndexView(generic.ListView):
     template_name = "sci/index.html"
 
 
-class CheckinView(generic.ListView):
+class CheckinsView(generic.ListView):
     model = Checkins
-    template_name = "sci/checkin.html"
+    template_name = "sci/checkins.html"
