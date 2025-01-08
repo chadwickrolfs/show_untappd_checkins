@@ -22,3 +22,6 @@ class Checkins(models.Model):
     venue_country = models.CharField(max_length=250)
     venue_latitude = models.IntegerField()
     venue_longitude = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.beer_name} by {self.brewery_name}"

@@ -1,3 +1,12 @@
-from django.shortcuts import render
+from django.views import generic
 
-# Create your views here.
+from .models import Checkins
+
+
+class IndexView(generic.ListView):
+    template_name = "sci/index.html"
+
+
+class CheckinView(generic.ListView):
+    model = Checkins
+    template_name = "sci/checkin.html"
