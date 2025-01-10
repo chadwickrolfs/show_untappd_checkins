@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Check Checkins{% endblock %}
+{% block content %}
+    <div>Check Checkins</div>
+    <div>If the configured api is up, it will be queried for an /all endpoint to get all checkins</div>
+    <div>Then the checkin_id will be compared with what exists already and any new checkins will be inserted.</div>
+    <form action="/check_checkins/" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Check">
+    </form>
+{% endblock %}
