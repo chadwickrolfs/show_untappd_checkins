@@ -4,7 +4,7 @@ from django import forms
 class CheckCheckinsForm(forms.Form):
     hostname = forms.CharField(
         label="hostname",
-        initial="localhost",
+        initial="http://localhost",
     )
     port = forms.CharField(
         label="port",

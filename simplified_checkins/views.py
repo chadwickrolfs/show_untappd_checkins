@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import generic
@@ -30,17 +32,25 @@ def check_checkins(request):
             except requests.exceptions.ConnectionError as e:
                 print(f"connection error:\n{e}")
                 return HttpResponseRedirect("")
+
+            db_checkin_ids = {}
             db_checkins = Checkins.objects.all()
             if db_checkins:
-                db_checkin_ids = [
+                db_checkin_ids = dict.fromkeys([
                     db_checkins.checkin_id
                     for checkin in db_checkins
-                ]
-                last_db_checkin_id = db_checkin_ids[0]
+                ])
 
-            missing_checkins = [updated_checkins[index] for index in indexes]
-            for missing_checkin in missing_checkins:
-                new_checkin = Checkins(missing_checkins)
+            missing_checkin_keys = (
+                updated_checkins.keys() ^ db_checkin_ids.keys()
+            )
+            for missing_key in missing_checkin_keys:
+                updated_checkin = updated_checkins[missing_key]
+                updated_checkin["checkin_datetime"] = datetime.strptime(
+                    updated_checkin["checkin_datetime"],
+                    "%a, %d %b %Y %X %z",
+                )
+                new_checkin = Checkins(**updated_checkin)
                 new_checkin.save()
 
             return HttpResponseRedirect("")

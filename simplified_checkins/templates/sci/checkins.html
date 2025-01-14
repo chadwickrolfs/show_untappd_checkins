@@ -1,7 +1,11 @@
 {% extends "sci/base.html" %}
 
-{% block title %}Not Implemented{% endblock %}
+{% block title %}Checkins{% endblock %}
 
 {% block content %}
-    <div>Not Implemented</div>
+    {% for checkin in object_list %}
+        <div>{{ checkin }}</div>
+    {% empty %}
+        <div>Not Implemented</div>
+    {% endfor %}
 {% endblock %}

@@ -9,7 +9,7 @@ urlpatterns = [
     path("checkins/", views.CheckinsView.as_view(), name="sci-checkins"),
     path(
         "check_checkins/",
-        views.CheckinsView.as_view(),
+        views.check_checkins,
         name="sci-check-checkins"
     ),
 ]
