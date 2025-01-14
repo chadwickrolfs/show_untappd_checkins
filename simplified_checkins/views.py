@@ -17,6 +17,7 @@ class IndexView(generic.TemplateView):
 class CheckinsView(generic.ListView):
     model = Checkins
     template_name = "sci/checkins.html"
+    ordering = "-checkin_id"
 
 
 def check_checkins(request):
