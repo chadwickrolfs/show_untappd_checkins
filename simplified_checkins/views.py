@@ -8,7 +8,7 @@ from .forms import CheckCheckinsForm
 import requests
 
 
-class IndexView(generic.ListView):
+class IndexView(generic.TemplateView):
     template_name = "sci/index.html"
 
 
@@ -31,19 +31,13 @@ def check_checkins(request):
                 print(f"connection error:\n{e}")
                 return HttpResponseRedirect("")
             db_checkins = Checkins.objects.all()
+            if db_checkins:
+                db_checkin_ids = [
+                    db_checkins.checkin_id
+                    for checkin in db_checkins
+                ]
+                last_db_checkin_id = db_checkin_ids[0]
 
-            checkin_ids = [
-                checkin["checkin_id"]
-                for checkin in updated_checkins
-            ]
-            db_checkin_ids = [
-                db_checkins.checkin_id
-                for checkin in db_checkins
-            ]
-            indexes = [
-                checkin_ids.index(missing_id)
-                for missing_id in set(checkin_ids) ^ set(db_checkin_ids)
-            ]
             missing_checkins = [updated_checkins[index] for index in indexes]
             for missing_checkin in missing_checkins:
                 new_checkin = Checkins(missing_checkins)
