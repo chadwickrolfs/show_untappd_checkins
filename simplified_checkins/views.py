@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import generic
 
@@ -21,6 +20,8 @@ class CheckinsView(generic.ListView):
 
 
 async def check_checkins(request):
+    missing_checkin_keys: set = {}
+    error_message: str = ""
     if request.method == "POST":
         form = CheckCheckinsForm(request.POST)
         if form.is_valid():
@@ -67,7 +68,20 @@ async def check_checkins(request):
                 )
                 new_checkin = Checkins(**updated_checkin)
                 new_checkin.save()
+
+        if missing_checkin_keys:
+            error_message = f"{len(missing_checkin_keys)} added"
+        else:
+            error_message = "no new checkins"
+
     else:
         form = CheckCheckinsForm()
 
-    return render(request, "sci/check_checkins.html", {"form": form})
+    return render(
+        request,
+        "sci/check_checkins.html",
+        {
+            "error_message": error_message,
+            "form": form,
+        }
+    )
