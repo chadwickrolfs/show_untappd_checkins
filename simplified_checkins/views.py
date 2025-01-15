@@ -20,7 +20,7 @@ class CheckinsView(generic.ListView):
     ordering = "-checkin_id"
 
 
-def check_checkins(request):
+async def check_checkins(request):
     if request.method == "POST":
         form = CheckCheckinsForm(request.POST)
         if form.is_valid():
@@ -31,20 +31,34 @@ def check_checkins(request):
                 response = requests.get(f"{hostname}:{port}{path}", timeout=5)
                 updated_checkins = response.json()
             except requests.exceptions.ConnectionError as e:
-                print(f"connection error:\n{e}")
-                return HttpResponseRedirect("")
+                error_message = f"connection error:\n{e}"
+                return render(
+                    request,
+                    "sci/check_checkins.html",
+                    {
+                        "error_message": error_message,
+                        "form": form
+                    },
+                )
 
             db_checkin_ids = {}
-            db_checkins = Checkins.objects.all()
-            if db_checkins:
-                db_checkin_ids = dict.fromkeys([
-                    db_checkins.checkin_id
-                    for checkin in db_checkins
-                ])
+            db_checkin_id_list = []
+            async for checkin in (
+                Checkins.objects.all().order_by("-checkin_id")
+            ):
+                db_checkin_id_list.append(checkin.checkin_id)
+            if db_checkin_id_list:
+                db_checkin_ids = dict.fromkeys(db_checkin_id_list)
 
-            missing_checkin_keys = (
-                updated_checkins.keys() ^ db_checkin_ids.keys()
-            )
+            # db_checkins = Checkins.objects.all().order_by("-checkin_id")
+            # if db_checkins:
+            #     db_checkin_ids = dict.fromkeys([
+            #         checkin.checkin_id for checkin in db_checkins
+            #     ])
+
+            dbck = [int(k) for k in db_checkin_ids.keys()]
+            udck = [int(k) for k in updated_checkins.keys()]
+            missing_checkin_keys = set(udck) - set(dbck)
             for missing_key in missing_checkin_keys:
                 updated_checkin = updated_checkins[missing_key]
                 updated_checkin["checkin_datetime"] = datetime.strptime(
@@ -53,8 +67,6 @@ def check_checkins(request):
                 )
                 new_checkin = Checkins(**updated_checkin)
                 new_checkin.save()
-
-            return HttpResponseRedirect("")
     else:
         form = CheckCheckinsForm()
 
