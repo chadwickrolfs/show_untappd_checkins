@@ -5,13 +5,14 @@
 {% block content %}
     {% for checkin in object_list %}
     <div>
-        <p>{{ checkin.checkin_datetime }}<br />
-        {{ checkin.beer_name }}<br />
-        {{ checkin.brewery_name }}<br />
-        {{ checkin.beer_abv }}<br />
-        {{ checkin.beer_style }}<br />
-        {{ checkin.venue_name }}<br />
-        {{ checkin.checkin_comment }}<br />
+        <p>
+            {{ checkin.checkin_datetime }}<br />
+            {{ checkin.beer_name }}<br />
+            {{ checkin.brewery_name }}<br />
+            {{ checkin.beer_abv }}<br />
+            {{ checkin.beer_style }}<br />
+            {{ checkin.venue_name }}<br />
+            {{ checkin.checkin_comment }}<br />
         </p>
     </div>
     {% empty %}
